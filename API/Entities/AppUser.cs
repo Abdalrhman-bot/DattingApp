@@ -18,6 +18,7 @@ public class AppUser
    public string? LookingFor { get; set; }
    public required string City { get; set; }
    public required string Country { get; set; }
+   public string? Interests { get; set; }
    public List<Photo> Photos { get; set; } = [];
    // public int GetAge()
    // {
