@@ -15,7 +15,7 @@ import { GalleryItem, GalleryModule, ImageItem } from 'ng-gallery';
 export class MemberDetailComponent implements OnInit {
 private memberService = inject(MembersService);
 private route= inject(ActivatedRoute);
-member?: Member;
+member?: Member;  
 images: GalleryItem[] = [];
 
 ngOnInit(): void {
@@ -34,4 +34,5 @@ loadMember() {
     }
   })
 }
+
 }
