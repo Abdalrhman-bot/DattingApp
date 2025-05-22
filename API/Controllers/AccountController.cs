@@ -5,34 +5,34 @@ using API.Data;
 using API.DTO;
 using API.Entities;
 using API.Interfaces;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
 
 
-public class AccountController(DataContext context, ITokenService tokenService) : BaseApiController
+public class AccountController(DataContext context, ITokenService tokenService, IMapper mapper) : BaseApiController
 {
   [HttpPost("register")] //account/register
   public async Task<ActionResult<UserDTO>> Register(RegisterDTO registerDTO)
   {
     if (await UserExists(registerDTO.Username)) return BadRequest("Username is taken");
-    return Ok();
-    // using var hmac = new HMACSHA512();
-    // var user = new AppUser
-    // {
-    //     UserName = registerDTO.Username.ToLower(),
-    //     PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDTO.Password)),
-    //     PasswordSalt = hmac.Key
-    // };
 
-    // context.Users.Add(user);
-    // await context.SaveChangesAsync();
-    // return new UserDTO
-    // {
-    //   Username = user.UserName,
-    //   Token = tokenService.CreateToken(user)
-    // };
+    using var hmac = new HMACSHA512();
+    var user = mapper.Map<AppUser>(registerDTO);
+    user.UserName = registerDTO.Username.ToLower();
+    user.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDTO.Password));
+    user.PasswordSalt =  hmac.Key;
+
+    context.Users.Add(user);
+    await context.SaveChangesAsync();
+    return new UserDTO
+    {
+      Username = user.UserName,
+      Token = tokenService.CreateToken(user),
+      KnownAs = user.KnownAs
+    };
 
   }
 
@@ -41,7 +41,7 @@ public class AccountController(DataContext context, ITokenService tokenService) 
   {
     var user = await context.Users
     .Include(p => p.Photos)
-    .FirstOrDefaultAsync(x => 
+    .FirstOrDefaultAsync(x =>
     x.UserName == loginDTO.UserName.ToLower());
 
     if (user == null) return Unauthorized("Invalid username");
@@ -50,7 +50,7 @@ public class AccountController(DataContext context, ITokenService tokenService) 
 
     var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDTO.Password));
 
-    for (int i= 0 ; i< computedHash.Length; i++)
+    for (int i = 0; i < computedHash.Length; i++)
     {
       if (computedHash[i] != user.PasswordHash[i]) return Unauthorized("Invalid password");
     }
@@ -58,8 +58,9 @@ public class AccountController(DataContext context, ITokenService tokenService) 
     return new UserDTO
     {
       Username = user.UserName,
+      KnownAs = user.KnownAs,
       Token = tokenService.CreateToken(user),
-      PhotoUrl = user.Photos.FirstOrDefault(x => x.IsMain)?.Url
+      PhotoUrl = user.Photos.FirstOrDefault(x => x.IsMain)?.Url,
     };
 
   }
