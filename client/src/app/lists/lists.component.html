@@ -30,7 +30,7 @@
     <pagination [boundaryLinks]="true" [totalItems]="likeService.paginatedResult()?.pagination!.totalItems"
         [itemsPerPage]="likeService.paginatedResult()?.pagination!.itemsPerPage" (pageChanged)="pageChanged($event)"
         [(ngModel)]="likeService.paginatedResult()?.pagination!.currentPage" [maxSize]="10"
-        [maxSize]="10" previousText="&lsaquo;" nextText="&rsaquo;" firstText="&laquo;" lastText="&raquo;">
+        previousText="&lsaquo;" nextText="&rsaquo;" firstText="&laquo;" lastText="&raquo;">
     </pagination>
 </div>
 }
