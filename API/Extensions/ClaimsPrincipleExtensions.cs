@@ -15,4 +15,5 @@ public static class ClaimsPrincipleExtensions
         var userId = int.Parse(user.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new Exception("Cannot get username from token"));
         return userId;
     }
+
 }
