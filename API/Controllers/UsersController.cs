@@ -23,6 +23,7 @@ IPhotoService photoService) : BaseApiController
     Response.AddPaginationHeader(users);
     return Ok(users);
   }
+
   [HttpGet("{username}")]
   public async Task<ActionResult<MemberDTO>> GetUser(string username)
   {
