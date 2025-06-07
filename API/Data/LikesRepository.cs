@@ -4,7 +4,6 @@ using API.Helpers;
 using API.Interfaces;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using Company.ClassLibrary1;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Data;

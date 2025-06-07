@@ -2,7 +2,6 @@ using System;
 using API.Data;
 using API.Entities;
 using API.Helpers;
-using Company.ClassLibrary1;
 
 namespace API.Interfaces;
 
